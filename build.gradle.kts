@@ -16,12 +16,14 @@ dependencies {
     implementation("com.google.guava:guava:33.2.0-jre")
     implementation("commons-cli:commons-cli:1.8.0")
     implementation("org.ow2.asm:asm:9.7")
+    implementation("net.lingala.zip4j:zip4j:2.11.5")
 }
 
 tasks.shadowJar {
     archiveClassifier.set("")
     manifest.attributes["Main-Class"] = "dev.badbird.processing.Main"
     manifest.attributes["Launcher-Agent-Class"] = "dev.badbird.processing.bullshit.JarLoader"
+    manifest.attributes["Add-Opens"] = "java.base/java.net"
 }
 tasks.build {
     dependsOn("shadowJar")

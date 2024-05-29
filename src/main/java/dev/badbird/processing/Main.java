@@ -3,30 +3,43 @@ package dev.badbird.processing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.badbird.processing.bullshit.Launcher;
+import dev.badbird.processing.bundler.BundleExecutor;
+import dev.badbird.processing.bundler.Bundler;
 import dev.badbird.processing.compiler.CompilerException;
 import dev.badbird.processing.compiler.CompilerState;
 import dev.badbird.processing.compiler.strategy.CompilationStrategy;
 import dev.badbird.processing.compiler.strategy.impl.BlindCompilationStrategy;
 import dev.badbird.processing.compiler.strategy.impl.graph.GraphCompilationStrategy;
 import dev.badbird.processing.objects.Config;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
+    @Getter
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static Config config;
     @SneakyThrows
     public static void main(String[] args) {
+        InputStream stream = Main.class.getResourceAsStream("/bundle.zip");
+        if (stream != null) {
+            new BundleExecutor(stream).run();
+            return;
+        }
         Options options = new Options();
         options.addOption("c", "config", true, "Config file path");
         options.addOption("o", "output", true, "Output file path");
         options.addOption("s", "strategy", true, "Compilation strategy");
         options.addOption("m", "main", true, "Main file path");
         options.addOption("l", "launch", false, "Launch the compiled file with jycessing");
+        options.addOption("b", "bundle", false, "Bundle the files into a executable jar");
         options.addOption("h", "help", false, "Show this help message");
         CommandLineParser parser = new DefaultParser();
         CommandLine cli = parser.parse(options, args);
@@ -64,8 +77,8 @@ public class Main {
             e.printStackTrace();
         }
 
+        File output = new File(cli.getOptionValue("output", "_output.pyde"));
         try {
-            File output = new File(cli.getOptionValue("output", "_output.pyde"));
             CompilerState compilerState = new CompilerState(new File(cli.getOptionValue("main", "./main.py")), output);
             compilerState.discoverFiles();
             compilerState.preProcess();
@@ -93,6 +106,11 @@ public class Main {
         } catch (CompilerException e) {
             System.err.println(e.getMessage());
             return;
+        }
+
+        if (cli.hasOption("bundle")) {
+            Path p = Paths.get(output.getAbsolutePath());
+            new Bundler(p).bundle();
         }
 
         if (cli.hasOption("launch")) {
