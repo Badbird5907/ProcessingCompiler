@@ -1,4 +1,4 @@
-package dev.badbird.processing.compiler.strategy.impl.graph;
+package dev.badbird.processing.compiler.strategy.impl;
 
 import dev.badbird.processing.compiler.CompilerException;
 import dev.badbird.processing.compiler.CompilerState;

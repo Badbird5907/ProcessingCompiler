@@ -6,7 +6,7 @@ import dev.badbird.processing.bullshit.Launcher;
 import dev.badbird.processing.compiler.CompilerException;
 import dev.badbird.processing.compiler.CompilerState;
 import dev.badbird.processing.compiler.strategy.CompilationStrategy;
-import dev.badbird.processing.compiler.strategy.impl.graph.BlindCompilationStrategy;
+import dev.badbird.processing.compiler.strategy.impl.BlindCompilationStrategy;
 import dev.badbird.processing.compiler.strategy.impl.graph.GraphCompilationStrategy;
 import dev.badbird.processing.objects.Config;
 import lombok.SneakyThrows;
