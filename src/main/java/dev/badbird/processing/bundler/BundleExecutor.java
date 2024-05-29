@@ -1,5 +1,6 @@
 package dev.badbird.processing.bundler;
 
+import dev.badbird.processing.Main;
 import dev.badbird.processing.bullshit.Launcher;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -21,15 +22,13 @@ public class BundleExecutor implements Runnable {
         // extract zip file to temp
         File temp = extract();
 
-        /*
         File bundle = new File(temp, "bundle.json");
         if (!bundle.exists()) {
             throw new IllegalStateException("bundle.json not found in bundle");
         }
         String json = new String(Files.readAllBytes(bundle.toPath()));
         BundleInfo info = Main.getGson().fromJson(json, BundleInfo.class);
-         */
-        File main = new File(temp, "_output.pyde");
+        File main = new File(temp, info.getMainFile());
         System.out.println("Launching: " + main.getAbsolutePath());
         if (!main.exists()) {
             throw new IllegalStateException("Main file not found in bundle");

@@ -1,5 +1,6 @@
 package dev.badbird.processing.bundler;
 
+import com.google.common.io.ByteSource;
 import dev.badbird.processing.Main;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Bundler {
     private final Path mainPath;
+    private final File out;
 
     @SneakyThrows
     public void bundle() {
@@ -37,6 +39,11 @@ public class Bundler {
         try (ZipFile zipFile = new ZipFile(bundle)) {
             List<File> list = Arrays.stream(files).filter(file -> !file.getName().endsWith(".py") && !file.getName().endsWith(".zip") && !file.getName().endsWith(".jar")).toList();
             zipFile.addFiles(list);
+            BundleInfo bundleInfo = new BundleInfo(main.getName());
+            byte[] bytes = Main.getGson().toJson(bundleInfo).getBytes();
+            ZipParameters zipParameters = new ZipParameters();
+            zipParameters.setFileNameInZip("bundle.json");
+            zipFile.addStream(ByteSource.wrap(bytes).openBufferedStream(), zipParameters);
         }
         return bundle;
     }
@@ -46,7 +53,6 @@ public class Bundler {
         // get the jar file of the main class
         File jarFile = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         // copy the jar file to a temp file
-        File out = new File("bundle.jar");
         if (out.exists()) {
             out.delete();
         }

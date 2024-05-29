@@ -39,7 +39,7 @@ public class Main {
         options.addOption("s", "strategy", true, "Compilation strategy");
         options.addOption("m", "main", true, "Main file path");
         options.addOption("l", "launch", false, "Launch the compiled file with jycessing");
-        options.addOption("b", "bundle", false, "Bundle the files into a executable jar");
+        options.addOption("b", "bundle", true, "Bundle the files into a executable jar");
         options.addOption("h", "help", false, "Show this help message");
         CommandLineParser parser = new DefaultParser();
         CommandLine cli = parser.parse(options, args);
@@ -110,7 +110,9 @@ public class Main {
 
         if (cli.hasOption("bundle")) {
             Path p = Paths.get(output.getAbsolutePath());
-            new Bundler(p).bundle();
+            new Bundler(p, new File(
+                    cli.getOptionValue("bundle", "output.jar")
+            )).bundle();
         }
 
         if (cli.hasOption("launch")) {
