@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,10 +24,33 @@ public class CompilerState {
 
     private Map<String, PythonFile> pythonFiles = new HashMap<>();
 
-    public void discoverFiles() {
-        List.of(Objects.requireNonNull(main.getParentFile().listFiles()))
-                .stream().filter(file -> file.getName().endsWith(".py") && !file.getName().equals(output.getName())).forEach(file ->
-                        pythonFiles.put(file.getName(), new PythonFile(file, file.getName())));
+    public void discoverFiles(boolean recurse) {
+        for (File file : Objects.requireNonNull(main.getParentFile().listFiles())) {
+            if (file.isDirectory() && !recurse) continue;
+            discoverFiles(file);
+        }
+        System.out.println("Discovered files: (" + pythonFiles.size() + ")");
+        pythonFiles.forEach((s, pythonFile) -> System.out.println(s + " " + pythonFile));
+    }
+
+    private void discoverFiles(File file) {
+        if (file.isDirectory()) {
+            for (File f : Objects.requireNonNull(file.listFiles())) {
+                discoverFiles(f);
+            }
+        } else {
+            if (file.getName().endsWith(".py") && !file.getName().equals(output.getName())) {
+                boolean isOnRoot = file.getParentFile().equals(main.getParentFile());
+                String name = isOnRoot ? file.getName() : main.toPath().relativize(file.toPath()).toString()
+                        .replace("." + File.separatorChar, "")
+                        .replace(File.separatorChar, '.');
+                if (name.startsWith(".")) {
+                    name = name.substring(1);
+                }
+                System.out.println("Discovered file: " + name + " | " + file);
+                pythonFiles.put(name, new PythonFile(file, name));
+            }
+        }
     }
 
     public void preProcess() {

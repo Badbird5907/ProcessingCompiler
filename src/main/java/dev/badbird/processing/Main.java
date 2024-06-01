@@ -40,6 +40,7 @@ public class Main {
         options.addOption("m", "main", true, "Main file path");
         options.addOption("l", "launch", false, "Launch the compiled file with jycessing");
         options.addOption("b", "bundle", true, "Bundle the files into a executable jar");
+        options.addOption("dr", "disable-recurse", false, "Disable recursive file discovery");
         options.addOption("h", "help", false, "Show this help message");
         CommandLineParser parser = new DefaultParser();
         CommandLine cli = parser.parse(options, args);
@@ -80,7 +81,7 @@ public class Main {
         File output = new File(cli.getOptionValue("output", "_output.pyde"));
         try {
             CompilerState compilerState = new CompilerState(new File(cli.getOptionValue("main", "./main.py")), output);
-            compilerState.discoverFiles();
+            compilerState.discoverFiles(!cli.hasOption("disable-recurse"));
             compilerState.preProcess();
 
             if (output.exists()) {
