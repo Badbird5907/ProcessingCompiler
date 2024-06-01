@@ -13,6 +13,7 @@ public class PythonFile {
     private final String name;
 
     private String content;
+    private int priority = -1;
 
     @SneakyThrows
     public PythonFile(File file, String name) {

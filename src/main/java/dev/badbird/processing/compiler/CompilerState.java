@@ -2,6 +2,7 @@ package dev.badbird.processing.compiler;
 
 import dev.badbird.processing.compiler.processor.PreProcessor;
 import dev.badbird.processing.compiler.processor.impl.CheckInvalidVariablesProcessor;
+import dev.badbird.processing.compiler.processor.impl.CompilerOverrideProcessor;
 import dev.badbird.processing.compiler.processor.impl.RemoveTypeImportProcessor;
 import lombok.Data;
 
@@ -14,8 +15,9 @@ import java.util.Objects;
 @Data
 public class CompilerState {
     private static final PreProcessor[] preProcessors = new PreProcessor[]{
+            new CompilerOverrideProcessor(),
             new CheckInvalidVariablesProcessor(),
-            new RemoveTypeImportProcessor()
+            new RemoveTypeImportProcessor(),
     };
     // order by number of files depending, then by actual order on
     private final File main;

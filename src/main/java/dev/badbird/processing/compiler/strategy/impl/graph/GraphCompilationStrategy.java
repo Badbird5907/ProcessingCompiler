@@ -19,12 +19,19 @@ public class GraphCompilationStrategy implements CompilationStrategy {
         System.out.println("Graph: " + graph);
         StringBuilder content = new StringBuilder("# GRAPH:\n# " + graph + "\n\n");
 
+        compilerState.getPythonFiles().values().stream().filter(pythonFile -> pythonFile.getPriority() > 0)
+                .sorted((o1, o2) -> Integer.compare(o2.getPriority(), o1.getPriority()))
+                .forEach(pythonFile -> content.append(pythonFile.getContent()).append("\n"));
+
         Iterable<String> iterable = Traverser.forGraph(graph)
                 .depthFirstPostOrder(compilerState.getMainPythonFile().getName());
         for (String s : iterable) {
             PythonFile file = compilerState.getPythonFiles().get(s);
             if (file == null) {
                 throw new CompilerException("File " + s + " not found!");
+            }
+            if (file.getPriority() > 0) {
+                continue; // skip the file if it has a priority
             }
             content.append(file.getContent()).append("\n");
         }
@@ -38,7 +45,7 @@ public class GraphCompilationStrategy implements CompilationStrategy {
                 .build();
         state.getPythonFiles().values().forEach((node) -> {
             System.out.println("Adding node " + node.getName() + " to graph");
-            graph.addNode(node.getName()); // FIXME: I think mutating it later breaks the graph as a clone is maybe inserted
+            graph.addNode(node.getName());
         });
         state.getPythonFiles().values().forEach(pythonFile -> {
             String[] lines = pythonFile.getContent().split("\n");
