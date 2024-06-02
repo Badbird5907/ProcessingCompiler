@@ -21,6 +21,11 @@ import java.util.jar.JarFile;
  */
 public class JarLoader {
 
+    private static Instrumentation inst;
+    private static ClassLoader addUrlThis;
+    private static Method addUrlMethod;
+    private static boolean loadedViaPreMain = false;
+
     private JarLoader() {
     }
 
@@ -169,8 +174,6 @@ public class JarLoader {
         }
     }
 
-    private static Instrumentation inst;
-
     private static Method getAddUrlMethod() {
         if (addUrlMethod == null) {
             addUrlThis = ClassLoader.getSystemClassLoader();
@@ -190,8 +193,4 @@ public class JarLoader {
         }
         return addUrlMethod;
     }
-
-    private static ClassLoader addUrlThis;
-    private static Method addUrlMethod;
-    private static boolean loadedViaPreMain = false;
 }

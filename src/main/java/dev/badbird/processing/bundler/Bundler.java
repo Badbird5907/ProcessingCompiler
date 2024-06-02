@@ -2,6 +2,7 @@ package dev.badbird.processing.bundler;
 
 import com.google.common.io.ByteSource;
 import dev.badbird.processing.Main;
+import dev.badbird.processing.objects.Config;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
@@ -17,6 +18,7 @@ import java.util.List;
 public class Bundler {
     private final Path mainPath;
     private final File out;
+    private final Config config;
 
     @SneakyThrows
     public void bundle() {
@@ -39,7 +41,7 @@ public class Bundler {
         try (ZipFile zipFile = new ZipFile(bundle)) {
             List<File> list = Arrays.stream(files).filter(file -> !file.getName().endsWith(".py") && !file.getName().endsWith(".zip") && !file.getName().endsWith(".jar")).toList();
             zipFile.addFiles(list);
-            BundleInfo bundleInfo = new BundleInfo(main.getName());
+            BundleInfo bundleInfo = new BundleInfo(main.getName(), config.getProcessingPyJarPath(), config.getProcessingInstallPath());
             byte[] bytes = Main.getGson().toJson(bundleInfo).getBytes();
             ZipParameters zipParameters = new ZipParameters();
             zipParameters.setFileNameInZip("bundle.json");

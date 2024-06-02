@@ -11,9 +11,11 @@ import java.util.List;
 
 public class Launcher {
     @SneakyThrows
-    public static void launch(String main) {
-        URL[] urls = new URL[]{new URL("file:///C:/Program%20Files/Processing/py/processing-py.jar")};
-        JarLoader.addToClassPath(new File("C:\\Program Files\\Processing\\core\\library\\core.jar"));
+    public static void launch(String main, String installPath, String pyJarPath) {
+        String url = "file:///" + pyJarPath.replace(" ", "%20").replace("\\", "/"); // weird encoding stuff
+        System.out.println("Launching with: " + url + " | " + installPath);
+        URL[] urls = new URL[]{new URL(url)};
+        JarLoader.addToClassPath(new File(installPath + "\\core\\library\\core.jar"));
         URLClassLoader classLoader = new MockClassLoader(urls, Main.class.getClassLoader());
         System.out.println("Running on java version: " + System.getProperty("java.version"));
         // call jycessing.Runner

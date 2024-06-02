@@ -33,7 +33,7 @@ public class BundleExecutor implements Runnable {
         if (!main.exists()) {
             throw new IllegalStateException("Main file not found in bundle");
         }
-        Launcher.launch(main.getAbsolutePath());
+        Launcher.launch(main.getAbsolutePath(), System.getProperty("processing.installPath", info.getProcessingInstallPath()), System.getProperty("processing.pyJarPath", info.getPyJarPath()));
     }
 
     @SneakyThrows

@@ -26,6 +26,7 @@ public class Main {
     @Getter
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static Config config;
+
     @SneakyThrows
     public static void main(String[] args) {
         InputStream stream = Main.class.getResourceAsStream("/bundle.zip");
@@ -59,7 +60,7 @@ public class Main {
             File dir = new File(path).getParentFile();
             configFile = new File(dir, "config.json");
         }
-        if(!configFile.exists()) {
+        if (!configFile.exists()) {
             try {
                 configFile.createNewFile();
                 config = new Config();
@@ -113,11 +114,11 @@ public class Main {
             Path p = Paths.get(output.getAbsolutePath());
             new Bundler(p, new File(
                     cli.getOptionValue("bundle", "output.jar")
-            )).bundle();
+            ), config).bundle();
         }
 
         if (cli.hasOption("launch")) {
-            Launcher.launch(cli.getOptionValue("o", "_output.pyde"));
+            Launcher.launch(cli.getOptionValue("o", "_output.pyde"), config.getProcessingInstallPath(), config.getProcessingPyJarPath());
         }
     }
 }

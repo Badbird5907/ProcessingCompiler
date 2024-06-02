@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class BundleInfo {
     private String mainFile;
+    private String pyJarPath, processingInstallPath;
 }
