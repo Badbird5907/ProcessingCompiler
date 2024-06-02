@@ -61,12 +61,7 @@ public class GraphCompilationStrategy implements CompilationStrategy {
                     if (file == null) {
                         throw new CompilerException("File " + fileName + ".py not found!");
                     }
-                    // check if the edge already exists
-                    if (graph.hasEdgeConnecting(file.getName(), pythonFile.getName())) {
-                        throw new CompilerException("Circular dependency detected between " + pythonFile.getName() + " and " + file.getName());
-                    } else {
-                        graph.putEdge(pythonFile.getName(), file.getName());
-                    }
+                    graph.putEdge(pythonFile.getName(), file.getName());
                 } else {
                     newContent.append(line).append("\n");
                 }
