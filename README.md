@@ -23,3 +23,6 @@ It also patches the processing3-python jar file to be compatible with java versi
 
 This allows ProcessingCompiler to also execute "jycessing" scripts using the `--launch`/`-l` flag.
 Additionally, the `--bundle` or `-b` flag bundles the project files into a copy of ProcessingCompiler itself (see [bundler](https://github.com/Badbird5907/ProcessingCompiler/tree/master/src/main/java/dev/badbird/processing/bundler))
+
+# Why?
+Cause i can lol
