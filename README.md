@@ -32,7 +32,7 @@ Cause i can lol
 <summary>The long answer</summary>
 <br>
  Processing3 (jycessing) uses a bootleg version of python called "Jython", which doesn't allow you to import more modules easily.
- I discovered you can execute jycessing scripts directly from the cli via the jar file, which lead to the creation of [this powershell script](https://gist.github.com/Badbird5907/3385ad2fcf0e0745eddc002530ea6df8#file-run_processing-ps1).
+ I discovered you can execute jycessing scripts directly from the cli via the jar file, which lead to the creation of <a href="https://gist.github.com/Badbird5907/3385ad2fcf0e0745eddc002530ea6df8#file-run_processing-ps1">this powershell script</a>.
  One day I decided that it would be *funny* if I made a "compiler" that combines modules into one file, and in the process of creating this compiler
- I also managed to get the processing3-py jar file to execute on java 17 without issue, by [patching out a single call](https://github.com/Badbird5907/ProcessingCompiler/blob/master/src/main/java/dev/badbird/processing/asm/ClassLoaderCallAdapter.java) from `ClassLoader.getSystemClassLoader()` to `getClass().getClassLoader()` using OW2 ASM.
+ I also managed to get the processing3-py jar file to execute on java 17 without issue, by <a href="https://github.com/jdf/processing.py/blob/master/runtime/src/jycessing/LibraryImporter.java#L332">patching out a single call</a> from `ClassLoader.getSystemClassLoader()` to `getClass().getClassLoader()` using OW2 ASM.
 </details>
