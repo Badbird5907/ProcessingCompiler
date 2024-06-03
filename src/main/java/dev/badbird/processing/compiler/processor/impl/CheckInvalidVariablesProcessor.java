@@ -13,6 +13,8 @@ public class CheckInvalidVariablesProcessor implements PreProcessor {
 
     @Override
     public void process(CompilerState state) {
+        if (Boolean.parseBoolean(System.getProperty("skipVariableCheck")))
+            return;
         state.getPythonFiles().values().forEach(pythonFile -> {
             String[] lines = pythonFile.getContent().split("\n");
             for (String line : lines) {
