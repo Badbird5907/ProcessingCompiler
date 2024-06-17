@@ -42,6 +42,7 @@ public class Main {
         options.addOption("l", "launch", false, "Launch the compiled file with jycessing");
         options.addOption("b", "bundle", true, "Bundle the files into a executable jar");
         options.addOption("dr", "disable-recurse", false, "Disable recursive file discovery");
+        options.addOption("lo", "launch-only", false, "Only launch the compiled file. Does not compile the file.");
         options.addOption("h", "help", false, "Show this help message");
         CommandLineParser parser = new DefaultParser();
         CommandLine cli = parser.parse(options, args);
@@ -80,36 +81,37 @@ public class Main {
         }
 
         File output = new File(cli.getOptionValue("output", "_output.pyde"));
-        try {
-            CompilerState compilerState = new CompilerState(new File(cli.getOptionValue("main", "./main.py")), output);
-            compilerState.discoverFiles(!cli.hasOption("disable-recurse"));
-            compilerState.preProcess();
+        if (!cli.hasOption("lo")) {
+            try {
+                CompilerState compilerState = new CompilerState(new File(cli.getOptionValue("main", "./main.py")), output);
+                compilerState.discoverFiles(!cli.hasOption("disable-recurse"));
+                compilerState.preProcess();
 
-            if (output.exists()) {
-                output.delete();
+                if (output.exists()) {
+                    output.delete();
+                }
+                output.createNewFile();
+                CompilationStrategy strategy;
+                if (cli.hasOption("strategy")) {
+                    strategy = switch (cli.getOptionValue("strategy").toLowerCase()) {
+                        case "graph" -> new GraphCompilationStrategy();
+                        case "blind" -> new BlindCompilationStrategy();
+                        default -> {
+                            System.err.println("Invalid strategy, falling back to graph strategy.");
+                            yield new GraphCompilationStrategy();
+                        }
+                    };
+                } else {
+                    strategy = new GraphCompilationStrategy();
+                }
+                String content = strategy.compile(compilerState);
+                String finalContent = "# Compilation Strategy: " + strategy.getClass().getName() + "\n" + content;
+                Files.writeString(output.toPath(), finalContent);
+            } catch (CompilerException e) {
+                System.err.println(e.getMessage());
+                return;
             }
-            output.createNewFile();
-            CompilationStrategy strategy;
-            if (cli.hasOption("strategy")) {
-                strategy = switch (cli.getOptionValue("strategy").toLowerCase()) {
-                    case "graph" -> new GraphCompilationStrategy();
-                    case "blind" -> new BlindCompilationStrategy();
-                    default -> {
-                        System.err.println("Invalid strategy, falling back to graph strategy.");
-                        yield new GraphCompilationStrategy();
-                    }
-                };
-            } else {
-                strategy = new GraphCompilationStrategy();
-            }
-            String content = strategy.compile(compilerState);
-            String finalContent = "# Compilation Strategy: " + strategy.getClass().getName() + "\n" + content;
-            Files.writeString(output.toPath(), finalContent);
-        } catch (CompilerException e) {
-            System.err.println(e.getMessage());
-            return;
         }
-
         if (cli.hasOption("bundle")) {
             Path p = Paths.get(output.getAbsolutePath());
             new Bundler(p, new File(

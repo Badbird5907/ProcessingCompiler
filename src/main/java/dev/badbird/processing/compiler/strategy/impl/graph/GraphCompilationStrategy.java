@@ -54,7 +54,7 @@ public class GraphCompilationStrategy implements CompilationStrategy {
             String[] lines = pythonFile.getContent().split("\n");
             StringBuilder newContent = new StringBuilder("# COMPILER_BEGIN: " + pythonFile.getName() + "\n");
             for (String line : lines) {
-                if (line.startsWith("from ")) { // check the import
+                if (line.startsWith("from ") && !line.trim().endsWith("#!compiler_ignore")) { // check the import
                     String[] split = line.split(" ");
                     String fileName = split[1];
                     PythonFile file = state.getPythonFiles().get(fileName + ".py");
